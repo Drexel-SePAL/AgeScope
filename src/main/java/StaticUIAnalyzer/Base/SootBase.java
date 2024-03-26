@@ -2,9 +2,11 @@ package StaticUIAnalyzer.Base;
 
 import soot.PackManager;
 import soot.Scene;
+import soot.SootClass;
 import soot.options.Options;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class SootBase {
@@ -63,5 +65,48 @@ public class SootBase {
 
         Scene.v().loadNecessaryClasses();
         PackManager.v().runPacks();
+    }
+
+    public boolean possibleVerificationClass(SootClass a) {
+        var editTextCount = 0;
+        for (var f : a.getFields()) {
+            if (f.getSubSignature().contains("android.widget.EditText")) {
+                editTextCount++;
+            }
+        }
+
+        return editTextCount >= 2;
+    }
+
+    public boolean isExtendedFrom(SootClass sootClass, String className) {
+        if (sootClass.getName().equals(className)) {
+            return true;
+        }
+
+        if (sootClass.hasSuperclass()) {
+            return isExtendedFrom(sootClass.getSuperclass(), className);
+        }
+
+        return false;
+    }
+
+    public HashSet<SootClass> findClassesByName(String className) {
+        var activitiesClass = new HashSet<SootClass>();
+        var apkClasses = Scene.v().getClasses().stream().filter(s -> !(s.getName().startsWith("java.")) &&
+//                        !(s.getName().startsWith("android.")) &&
+//                        !(s.getName().startsWith("androidx.")) &&
+                !(s.getName().startsWith("com.android.")) && !(s.getName().startsWith("javax.")) && !(s.getName().startsWith("android.support.")) && !(s.getName().startsWith("sun.")) && !(s.getName().startsWith("com.google."))).toList();
+
+        for (var cls : apkClasses) {
+            if (activitiesClass.contains(cls)) {
+                continue;
+            }
+
+            if (isExtendedFrom(cls, className)) {
+                activitiesClass.add(cls);
+            }
+        }
+
+        return activitiesClass;
     }
 }
