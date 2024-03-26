@@ -1,4 +1,4 @@
-package StaticUIAnalyzer;
+package StaticUIAnalyzer.Analyzer;
 
 import StaticUIAnalyzer.Base.SootBase;
 import StaticUIAnalyzer.Util.Util;
@@ -7,10 +7,12 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.jimple.Stmt;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
-public class SootAnalyzer extends SootBase {
-    public SootAnalyzer(String apkPath, String platformPath) {
+public class ActivityAnalyzer extends SootBase {
+    public ActivityAnalyzer(String apkPath, String platformPath) {
         super(apkPath, platformPath);
     }
 
@@ -26,7 +28,7 @@ public class SootAnalyzer extends SootBase {
             for (var method : a.getMethods()) {
                 var idBehavior = idVerifyBehavior(method);
                 if (!idBehavior.isEmpty()) {
-                    System.out.println(method.getName() + ": " + idVerifyBehavior(method));
+                    System.out.println(method + ": " + idVerifyBehavior(method));
                 }
             }
         }
@@ -71,11 +73,21 @@ public class SootAnalyzer extends SootBase {
                 if (!result.getOrDefault("length", false)) {
                     result.put("length", checkIdLength(currMethod));
                 }
-                if (!result.getOrDefault("validity", false)) {
-                    result.put("validity", checkSubSeq(currMethod, new ArrayList<>(Arrays.asList("0", "17"))));
-                }
-                if (!result.getOrDefault("dob", false)) {
-                    result.put("dob", checkSubSeq(currMethod, new ArrayList<>(Arrays.asList("6", "14"))));
+
+                var subSeq = new HashMap<String, String[]>() {
+                    {
+                        put("validity", new String[]{"0", "17"});
+                        put("dob", new String[]{"6", "14"});
+                        put("dob-year", new String[]{"6", "10"});
+                        put("dob-month", new String[]{"10", "12"});
+                        put("dob-day", new String[]{"12", "14"});
+                    }
+                };
+
+                for (var p : subSeq.entrySet()) {
+                    if (!result.getOrDefault(p.getKey(), false)) {
+                        result.put(p.getKey(), checkSubSeq(currMethod, p.getValue()));
+                    }
                 }
             }
         }
@@ -83,7 +95,7 @@ public class SootAnalyzer extends SootBase {
         return result;
     }
 
-    public boolean checkSubSeq(SootMethod sootMethod, ArrayList<String> condition) {
+    public boolean checkSubSeq(SootMethod sootMethod, String[] condition) {
         if (!sootMethod.hasActiveBody()) {
             return false;
         }
@@ -99,8 +111,7 @@ public class SootAnalyzer extends SootBase {
             if (invokeExpr.getMethod().toString().equals("<java.lang.CharSequence: java.lang.CharSequence subSequence(int,int)>")) {
                 var exprArgs = invokeExpr.getArgs();
 
-                var result = Util.sootValueCompare(exprArgs.getFirst(), condition.getFirst()) && Util.sootValueCompare(exprArgs.getLast(), condition.getLast());
-
+                var result = Util.sootValueCompare(exprArgs.getFirst(), condition[0]) && Util.sootValueCompare(exprArgs.getLast(), condition[1]);
                 if (!result) {
                     continue;
                 }
