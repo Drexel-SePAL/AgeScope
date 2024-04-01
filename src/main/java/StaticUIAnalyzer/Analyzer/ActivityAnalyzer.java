@@ -2,8 +2,10 @@ package StaticUIAnalyzer.Analyzer;
 
 import StaticUIAnalyzer.Base.SootBase;
 import StaticUIAnalyzer.Util.Util;
+import soot.Scene;
 import soot.SootMethod;
 import soot.jimple.Stmt;
+import soot.options.Options;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,17 +16,20 @@ public class ActivityAnalyzer extends SootBase {
     }
 
     public void analyze() {
-        this.initSootConfig();
+        if (Scene.v().getState() == 0) {
+            initSootConfig();
+        } else {
+            addExcludeClass();
+            Options.v().set_exclude(excludePackagesList);
+        }
         var activities = findClassesByName("android.app.Activity");
-
         for (var a : activities) {
-            if (!this.possibleVerificationClass(a)) {
-                continue;
-            }
+//            if (!this.possibleVerificationClass(a)) {
+//                continue;
+//            }
 
             for (var method : a.getMethods()) {
-                var idBehavior = verificationCheck(method);
-                if (!idBehavior.isEmpty()) {
+                if (!verificationCheck(method).isEmpty()) {
                     System.out.println(method + ": " + verificationCheck(method));
                 }
             }
@@ -44,18 +49,19 @@ public class ActivityAnalyzer extends SootBase {
                 continue;
             }
 
-            if (stmt.getInvokeExpr().toString().contains("getText()")) {
+            var invokeExpr = stmt.getInvokeExpr();
+            var currMethod = invokeExpr.getMethod();
+
+            if (invokeExpr.toString().contains("getText()")) {
                 getTextCalled = true;
                 continue;
             }
 
             if (getTextCalled) {
-                var invokeExpr = stmt.getInvokeExpr();
                 if (invokeExpr.getMethod().getName().startsWith("<java.lang.Object")) {
                     continue;
                 }
 
-                var currMethod = invokeExpr.getMethod();
                 if (!result.getOrDefault("length", false)) {
                     result.put("length", checkIdLength(currMethod));
                 }
@@ -74,6 +80,10 @@ public class ActivityAnalyzer extends SootBase {
                     if (!result.getOrDefault(p.getKey(), false)) {
                         result.put(p.getKey(), checkSubSequence(currMethod, p.getValue()));
                     }
+                }
+            } else if (currMethod.hasActiveBody()) {
+                if (currMethod.getActiveBody().toString().contains("== 18") || currMethod.getActiveBody().toString().contains("!= 18")) {
+                    result.put("length", true);
                 }
             }
         }

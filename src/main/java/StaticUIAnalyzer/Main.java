@@ -6,7 +6,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        var apkPath = "/Users/fanfannnmn/Downloads/android_nsfw/real_name/gui/com.tencent.tmgp.hse_96300.apk";
+        var apkPath = "/Users/fanfannnmn/Downloads/android_nsfw/real_name/gui/剑魂online.apk";
         var apkfile = new ApkFile(apkPath,
                 "/var/folders/md/ltc18by93mlcrhlgrcwt5tq40000gn/T/B637A873-9109-40F7-8E0B-A84601CCA4D6/");
 //        apkfile.decodeApk();

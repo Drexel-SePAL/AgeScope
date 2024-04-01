@@ -78,6 +78,7 @@ public class SootBase {
         return editTextCount >= 2;
     }
 
+
     public boolean isExtendedFrom(SootClass sootClass, String className) {
         if (sootClass.getName().equals(className)) {
             return true;
