@@ -1,5 +1,6 @@
 package StaticUIAnalyzer.Base;
 
+import StaticUIAnalyzer.Model.ResultReport;
 import soot.PackManager;
 import soot.Scene;
 import soot.SootClass;
@@ -13,10 +14,12 @@ public class SootBase {
     public static List<String> excludePackagesList = new ArrayList<>();
     public String apkPath;
     public String platformPath;
+    public ResultReport result;
 
-    public SootBase(String apkPath, String platformPath) {
+    public SootBase(String apkPath, String platformPath, ResultReport result) {
         this.apkPath = apkPath;
         this.platformPath = platformPath;
+        this.result = result;
     }
 
     public SootBase() {

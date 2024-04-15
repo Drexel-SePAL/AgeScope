@@ -10,14 +10,18 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class Main {
     private static AndroidDriver driver;
 
-    public static void setupDriver() throws URISyntaxException, MalformedURLException {
-        var options = new UiAutomator2Options().setPlatformName("Android").setPlatformVersion("13").setAutomationName("uiautomator2").setDeviceName("Pixel_6").setAutoGrantPermissions(true).setApp("/Users/fanfannnmn/Downloads/adult_apk/BCA0806E08712FB24983990B0FEBB649F28502E4C53985AA0F02EC0DFBE45C13.apk");
+    public static void setupDriver(String apkPath) throws URISyntaxException, MalformedURLException {
+        var options = new UiAutomator2Options().setPlatformName("Android").setPlatformVersion("13").setAutomationName("uiautomator2").setDeviceName("Pixel_6").setAutoGrantPermissions(true).setApp(apkPath);
         driver = new AndroidDriver(new URI("http://127.0.0.1:4723").toURL(), options);
     }
 
@@ -62,17 +66,12 @@ public class Main {
         return containAgeCheckText(textList);
     }
 
-    public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
-        setupDriver();
-        Thread.sleep(10000);
-
+    public static void check(String apkPath) {
+        System.out.println(apkPath);
         var mainDoc = Jsoup.parse(driver.getPageSource());
         if (hasAgeCheck(mainDoc)) {
             System.out.println("Contains in mainDoc");
         } else {
-            var clickable = mainDoc.select("[clickable=true]");
-            System.out.println(clickable);
-            
             var clickableElements = driver.findElements(By.xpath("//*[@clickable='true']"));
             for (var element : clickableElements) {
                 try {
@@ -88,7 +87,22 @@ public class Main {
                 }
             }
         }
+    }
 
-        tearDownDriver();
+    public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
+        try (Stream<Path> paths = Files.walk(Paths.get("/Users/fanfannnmn/Downloads/adult_apk"))) {
+            paths.filter(Files::isRegularFile).forEach(a -> {
+                try {
+                    setupDriver(a.toString());
+                    Thread.sleep(3000);
+                    check(a.toString());
+                    tearDownDriver();
+                } catch (Exception ignore) {
+
+                }
+            });
+        }
+
+
     }
 }

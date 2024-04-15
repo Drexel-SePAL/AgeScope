@@ -1,7 +1,8 @@
 package StaticUIAnalyzer.Analyzer;
 
 import StaticUIAnalyzer.Base.SootBase;
-import StaticUIAnalyzer.Util.Util;
+import StaticUIAnalyzer.Model.ResultReport;
+import StaticUIAnalyzer.Util.Utils;
 import soot.Scene;
 import soot.SootMethod;
 import soot.jimple.Stmt;
@@ -11,8 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ActivityAnalyzer extends SootBase {
-    public ActivityAnalyzer(String apkPath, String platformPath) {
-        super(apkPath, platformPath);
+    public ActivityAnalyzer(String apkPath, String platformPath, ResultReport result) {
+        super(apkPath, platformPath, result);
     }
 
     public void analyze() {
@@ -23,14 +24,18 @@ public class ActivityAnalyzer extends SootBase {
             Options.v().set_exclude(excludePackagesList);
         }
         var activities = findClassesByName("android.app.Activity");
+        activities.addAll(findClassesByName("android.app.DialogFragment"));
         for (var a : activities) {
 //            if (!this.possibleVerificationClass(a)) {
 //                continue;
 //            }
 
             for (var method : a.getMethods()) {
+                var res = verificationCheck(method);
                 if (!verificationCheck(method).isEmpty()) {
-                    System.out.println(method + ": " + verificationCheck(method));
+                    this.result.activityResult = true;
+                    this.result.activity.add(res);
+//                    System.out.println(method + ": " + verificationCheck(method));
                 }
             }
         }
@@ -107,7 +112,7 @@ public class ActivityAnalyzer extends SootBase {
             if (invokeExpr.getMethod().toString().equals("<java.lang.CharSequence: java.lang.CharSequence subSequence(int,int)>")) {
                 var exprArgs = invokeExpr.getArgs();
 
-                var result = Util.sootValueCompare(exprArgs.getFirst(), condition[0]) && Util.sootValueCompare(exprArgs.getLast(), condition[1]);
+                var result = Utils.sootValueCompare(exprArgs.getFirst(), condition[0]) && Utils.sootValueCompare(exprArgs.getLast(), condition[1]);
                 if (!result) {
                     continue;
                 }

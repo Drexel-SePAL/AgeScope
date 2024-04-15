@@ -1,9 +1,10 @@
-package StaticUIAnalyzer;
+package StaticUIAnalyzer.Util;
 
 import StaticUIAnalyzer.Decoder.LayoutXMLDecoder;
 import StaticUIAnalyzer.Decoder.PublicXMLDecoder;
 import StaticUIAnalyzer.Decoder.StringsXMLDecoder;
 import brut.androlib.ApkDecoder;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -104,6 +105,10 @@ public class ApkFile implements AutoCloseable {
 
     @Override
     public void close() {
-
+        try {
+            FileUtils.deleteDirectory(new File(this.out));
+        } catch (Exception ignore) {
+            System.err.println("[ApkFile]: unable to remove " + this.out);
+        }
     }
 }

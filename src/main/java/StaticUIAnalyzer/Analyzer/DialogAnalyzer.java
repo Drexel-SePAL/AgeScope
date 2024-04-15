@@ -1,6 +1,7 @@
 package StaticUIAnalyzer.Analyzer;
 
 import StaticUIAnalyzer.Base.SootBase;
+import StaticUIAnalyzer.Model.ResultReport;
 import soot.Scene;
 import soot.SootMethod;
 import soot.Type;
@@ -11,8 +12,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DialogAnalyzer extends SootBase {
-    public DialogAnalyzer(String apkPath, String platformPath) {
-        super(apkPath, platformPath);
+    public DialogAnalyzer(String apkPath, String platformPath, ResultReport result) {
+        super(apkPath, platformPath, result);
     }
 
     public void analyze() {
@@ -30,9 +31,11 @@ public class DialogAnalyzer extends SootBase {
             }
 
             for (var method : a.getMethods()) {
-                var idBehavior = verificationCheck(method);
-                if (!idBehavior.isEmpty()) {
-                    System.out.println(method.getName() + ": " + idBehavior);
+                var res = verificationCheck(method);
+                if (!res.isEmpty()) {
+                    this.result.dialogResult = true;
+                    this.result.dialog.add(res);
+//                    System.out.println(method.getName() + ": " + idBehavior);
                 }
             }
         }
