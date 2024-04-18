@@ -49,13 +49,12 @@ public class Main {
         // check output file
         var outputFilePath = outputPath + "/" + FilenameUtils.getBaseName(indexPath).split("\\.")[0] + "_result.txt";
         FileWriter fileWriter = null;
-        if (FileUtils.fileExists(outputFilePath)) {
-            try {
-                fileWriter = new FileWriter(outputFilePath);
-            } catch (IOException e) {
-                System.err.println("[main] Error writing to file: " + outputFilePath);
-                System.exit(1);
-            }
+
+        try {
+            fileWriter = new FileWriter(outputFilePath);
+        } catch (IOException e) {
+            System.err.println("[main] Error writing to file: " + outputFilePath);
+            System.exit(1);
         }
 
         // # mkdir -p /media/ramdisk
@@ -82,35 +81,27 @@ public class Main {
 
             try {
                 assert fileWriter != null;
-                fileWriter.write(gson.toJson(result));
+                fileWriter.write(gson.toJson(result) + "\n");
                 fileWriter.flush();
             } catch (Exception ignore) {
             }
 
             apkfile.close();
         }
+
+        try {
+            assert fileWriter != null;
+            fileWriter.close();
+        } catch (Exception ignore) {
+        }
     }
 
     private static CommandLine cliParser(String[] args) throws ParseException {
         Options options = new Options();
-        options.addOption(Option.builder("h")
-                .longOpt("help")
-                .build());
-        options.addOption(Option.builder("p")
-                .longOpt("platform")
-                .argName("sdkPath")
-                .hasArg()
-                .build());
-        options.addOption(Option.builder("i")
-                .longOpt("index")
-                .argName("indexPath")
-                .hasArg()
-                .build());
-        options.addOption(Option.builder("o")
-                .longOpt("outputDir")
-                .argName("outputPath")
-                .hasArg()
-                .build());
+        options.addOption(Option.builder("h").longOpt("help").build());
+        options.addOption(Option.builder("p").longOpt("platform").argName("sdkPath").hasArg().build());
+        options.addOption(Option.builder("i").longOpt("index").argName("indexPath").hasArg().build());
+        options.addOption(Option.builder("o").longOpt("outputDir").argName("outputPath").hasArg().build());
 
         DefaultParser parser = new DefaultParser();
 
@@ -151,14 +142,14 @@ public class Main {
         }
 
         // check apk path
-        String apkPath = cli.getOptionValue("i");
-        if (!FileUtils.fileExists(apkPath)) {
+        var indexPath = cli.getOptionValue("i");
+        if (!FileUtils.fileExists(indexPath)) {
             System.err.println("[cli parser] err: invalid apk path");
             helpMessage();
             System.exit(1);
         }
 
-        HashMap<String, String> parseOptionResult = new HashMap<>();
+        var parseOptionResult = new HashMap<String, String>();
 
         // check platform path
         if (cli.hasOption("p")) {
@@ -171,20 +162,11 @@ public class Main {
             parseOptionResult.put("sdkPath", sdkPath);
         }
 
-        if (cli.hasOption("s")) {
-            parseOptionResult.put("scan", "true");
-        }
-
-        if (cli.hasOption("T")) {
-            parseOptionResult.put("trace", "true");
-        }
-
         if (cli.hasOption("o")) {
             parseOptionResult.put("outputPath", cli.getOptionValue("o"));
         }
 
-        parseOptionResult.put("apkPath", apkPath);
-        parseOptionResult.put("targetName", cli.getOptionValue("t"));
+        parseOptionResult.put("indexPath", indexPath);
 
         return parseOptionResult;
     }

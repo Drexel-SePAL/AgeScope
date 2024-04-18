@@ -32,10 +32,11 @@ public class ActivityAnalyzer extends SootBase {
 
             for (var method : a.getMethods()) {
                 var res = verificationCheck(method);
-                if (!verificationCheck(method).isEmpty()) {
-                    this.result.activityResult = true;
-                    this.result.activity.add(res);
-//                    System.out.println(method + ": " + verificationCheck(method));
+                for (var x : res.entrySet()) {
+                    if (x.getValue()) {
+                        this.result.activityResult = true;
+                        this.result.activity.add(res);
+                    }
                 }
             }
         }

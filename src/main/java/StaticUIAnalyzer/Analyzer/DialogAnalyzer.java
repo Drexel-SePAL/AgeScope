@@ -50,7 +50,7 @@ public class DialogAnalyzer extends SootBase {
         var types = method.getParameterTypes().stream()
                 .collect(Collectors.groupingBy(Type::toString, Collectors.counting()));
 
-        if (types.size() == 1 && types.getOrDefault("java.lang.String", 0L) == 2L) {
+        if (types.size() == 1 && !this.result.layouts.isEmpty() && types.getOrDefault("java.lang.String", 0L) == 2L) {
             result.put("age", true);
         }
 
