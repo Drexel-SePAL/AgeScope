@@ -29,7 +29,7 @@ public class Utils {
         }
 
         var gson = new Gson();
-        if (scanner.hasNextLine()) {
+        while (scanner.hasNextLine()) {
             var resLine = gson.fromJson(scanner.nextLine(), ResultReport.class);
             exist.add(resLine.packageName);
         }

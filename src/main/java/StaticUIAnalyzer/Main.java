@@ -53,7 +53,7 @@ public class Main {
         FileWriter fileWriter = null;
 
         try {
-            fileWriter = new FileWriter(outputFilePath);
+            fileWriter = new FileWriter(outputFilePath, true);
         } catch (IOException e) {
             System.err.println("[main] Error writing to file: " + outputFilePath);
             System.exit(1);
@@ -87,7 +87,6 @@ public class Main {
             dialog.analyze();
 
             try {
-                assert fileWriter != null;
                 fileWriter.write(gson.toJson(result) + "\n");
                 fileWriter.flush();
             } catch (Exception ignore) {
@@ -97,7 +96,6 @@ public class Main {
         }
 
         try {
-            assert fileWriter != null;
             fileWriter.close();
         } catch (Exception ignore) {
         }
