@@ -5,6 +5,7 @@ import StaticUIAnalyzer.Analyzer.DialogAnalyzer;
 import StaticUIAnalyzer.Model.ResultReport;
 import StaticUIAnalyzer.Util.ApkFile;
 import StaticUIAnalyzer.Util.FileUtils;
+import StaticUIAnalyzer.Util.Utils;
 import com.google.gson.Gson;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FilenameUtils;
@@ -48,6 +49,7 @@ public class Main {
 
         // check output file
         var outputFilePath = outputPath + "/" + FilenameUtils.getBaseName(indexPath).split("\\.")[0] + "_result.txt";
+        var processed = Utils.skipStaticProcessedList(outputFilePath);
         FileWriter fileWriter = null;
 
         try {
@@ -62,9 +64,14 @@ public class Main {
         // # nano /etc/fstab
         //     tmpfs /media/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=8192M 0 0
         for (var apkFilePath : apkList) {
+            var pkgName = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
+            if (processed.contains(pkgName)) {
+                continue;
+            }
             var result = new ResultReport();
+            result.packageName = pkgName;
             var apkfile = new ApkFile(apkFilePath, "/media/ramdisk/");
-            result.packageName = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
+
             apkfile.decodeApk();
             apkfile.prepare();
             if (apkfile.examLayouts()) {

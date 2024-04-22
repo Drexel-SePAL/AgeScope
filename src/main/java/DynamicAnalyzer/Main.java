@@ -89,7 +89,7 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         try (Stream<Path> paths = Files.walk(Paths.get("/Users/fanfannnmn/Downloads/adult_apk"))) {
             paths.filter(Files::isRegularFile).forEach(a -> {
                 try {
@@ -98,7 +98,6 @@ public class Main {
                     check(a.toString());
                     tearDownDriver();
                 } catch (Exception ignore) {
-
                 }
             });
         }
