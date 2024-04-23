@@ -1,4 +1,4 @@
-package StaticUIAnalyzer.Util;
+package CommonUtils;
 
 import java.io.File;
 

@@ -1,10 +1,10 @@
 package StaticUIAnalyzer;
 
+import CommonUtils.FileUtils;
 import StaticUIAnalyzer.Analyzer.ActivityAnalyzer;
 import StaticUIAnalyzer.Analyzer.DialogAnalyzer;
 import StaticUIAnalyzer.Model.ResultReport;
 import StaticUIAnalyzer.Util.ApkFile;
-import StaticUIAnalyzer.Util.FileUtils;
 import StaticUIAnalyzer.Util.Utils;
 import com.google.gson.Gson;
 import org.apache.commons.cli.*;
@@ -177,7 +177,7 @@ public class Main {
     }
 
     private static void helpMessage() {
-        System.out.println("usage: SuperAppAnalyzer [OPTIONS]\n");
+        System.out.println("usage: StaticUIAnalyzer [OPTIONS]\n");
         System.out.println("Options:");
         System.out.println("  -h, --help                   show this help message and exit program");
         System.out.println("  -i, --index    <indexPath>   index for input apks");
