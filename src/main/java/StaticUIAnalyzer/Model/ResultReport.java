@@ -10,4 +10,5 @@ public class ResultReport {
     public List<Map<String, Boolean>> dialog = new ArrayList<>();
     public Set<String> layoutIds = new HashSet<>();
     public Set<String> layouts = new HashSet<>();
+    public double timeInSecond;
 }

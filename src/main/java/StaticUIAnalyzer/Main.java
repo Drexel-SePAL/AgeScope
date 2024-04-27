@@ -64,6 +64,7 @@ public class Main {
         // # nano /etc/fstab
         //     tmpfs /media/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=8192M 0 0
         for (var apkFilePath : apkList) {
+            var startTime = System.nanoTime();
             var filename = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
             if (processed.contains(filename)) {
                 continue;
@@ -86,6 +87,7 @@ public class Main {
             activity.analyze();
             var dialog = new DialogAnalyzer(apkFilePath, sdkPath, result);
             dialog.analyze();
+            result.timeInSecond = (System.nanoTime() - startTime) / 1_000_000_000.0;
 
             try {
                 fileWriter.write(gson.toJson(result) + "\n");
