@@ -137,12 +137,12 @@ public class Main {
 
         for (var apkFilePath : apkList) {
             try {
-                var pkgName = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
-                if (processed.contains(pkgName)) {
+                var filename = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
+                if (processed.contains(filename)) {
                     continue;
                 }
                 var result = new ResultReport();
-                result.packageName = pkgName;
+                result.packageSha256 = filename;
                 setupDriver(deviceName, platformVersion, apkFilePath);
 
                 Thread.sleep(3000);

@@ -31,7 +31,7 @@ public class Utils {
         var gson = new Gson();
         while (scanner.hasNextLine()) {
             var resLine = gson.fromJson(scanner.nextLine(), ResultReport.class);
-            exist.add(resLine.packageName);
+            exist.add(resLine.packageSha256);
         }
 
         return exist;

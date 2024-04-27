@@ -3,7 +3,7 @@ package StaticUIAnalyzer.Model;
 import java.util.*;
 
 public class ResultReport {
-    public String packageName;
+    public String packageSha256;
     public boolean activityResult;
     public boolean dialogResult;
     public List<Map<String, Boolean>> activity = new ArrayList<>();

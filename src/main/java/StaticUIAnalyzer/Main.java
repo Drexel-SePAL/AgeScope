@@ -64,12 +64,13 @@ public class Main {
         // # nano /etc/fstab
         //     tmpfs /media/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=8192M 0 0
         for (var apkFilePath : apkList) {
-            var pkgName = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
-            if (processed.contains(pkgName)) {
+            var filename = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
+            if (processed.contains(filename)) {
                 continue;
             }
             var result = new ResultReport();
-            result.packageName = pkgName;
+            result.packageSha256 = filename;
+
             var apkfile = new ApkFile(apkFilePath, "/media/ramdisk/");
 
             apkfile.decodeApk();
