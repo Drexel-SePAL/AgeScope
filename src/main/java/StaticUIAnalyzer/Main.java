@@ -63,6 +63,10 @@ public class Main {
         // # chown -R user:user /media/ramdisk
         // # nano /etc/fstab
         //     tmpfs /media/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=8192M 0 0
+        // # /media/ramdisk/
+
+        // $ erasevolume HFS+ 'ramdisk' `hdiutil attach -nobrowse -nomount ram://16777216`
+        // # /Volumes/ramdisk/
         for (var apkFilePath : apkList) {
             var startTime = System.nanoTime();
             var filename = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
@@ -72,7 +76,7 @@ public class Main {
             var result = new ResultReport();
             result.packageSha256 = filename;
 
-            var apkfile = new ApkFile(apkFilePath, "/media/ramdisk/");
+            var apkfile = new ApkFile(apkFilePath, "/Volumes/ramdisk/");
 
             apkfile.decodeApk();
             apkfile.prepare();
