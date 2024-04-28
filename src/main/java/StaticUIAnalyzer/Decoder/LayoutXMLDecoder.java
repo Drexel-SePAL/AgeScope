@@ -2,6 +2,7 @@ package StaticUIAnalyzer.Decoder;
 
 import StaticUIAnalyzer.Base.XMLDecoderBase;
 
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class LayoutXMLDecoder extends XMLDecoderBase {
@@ -12,17 +13,17 @@ public class LayoutXMLDecoder extends XMLDecoderBase {
         this.stringsXMLDecoder = stringsXMLDecoder;
     }
 
-    public String ageCheckLayout() {
-        var pattern = Pattern.compile("adult(s)?( only)?|(over )?[1-2]\\d\\+?|under( )?age|age of [1-2]\\d|af_num_adults");
-
-        if (foundPatternFromTags(pattern)) {
-            return this.xmlFile.getPath();
+    public Map.Entry<String, String> ageCheckLayout() {
+        var pattern = Pattern.compile("adult(s)?( only)?|(over )?[1-2]\\d\\+?|under( )?age|age of [1-2]\\d|af_num_adults|未成年|[1-2]\\d岁|年龄");
+        var match = foundPatternFromTags(pattern);
+        if (!match.isEmpty()) {
+            return Map.entry(this.xmlFile.getPath(), match);
         }
 
-        return "";
+        return null;
     }
 
-    public String idCheckLayout() {
+    public Map.Entry<String, String> idCheckLayout() {
         var pattern = Pattern.compile("身\\s*份\\s*证\\s*|姓\\s*名");
         var numOfEditText = 0;
         for (var tag : this.tags) {
@@ -31,14 +32,15 @@ public class LayoutXMLDecoder extends XMLDecoderBase {
             }
         }
 
-        if (foundPatternFromTags(pattern) && numOfEditText >= 2) {
-            return this.xmlFile.getPath();
+        var match = foundPatternFromTags(pattern);
+        if (!match.isEmpty() && numOfEditText >= 2) {
+            return Map.entry(this.xmlFile.getPath(), match);
         }
 
-        return "";
+        return null;
     }
 
-    private boolean foundPatternFromTags(Pattern pattern) {
+    private String foundPatternFromTags(Pattern pattern) {
         for (var e : this.tags) {
             var val = e.attributes.getOrDefault("android:text", "");
             if (val.isEmpty()) {
@@ -48,11 +50,11 @@ public class LayoutXMLDecoder extends XMLDecoderBase {
             if (!val.isEmpty()) {
                 val = stringsXMLDecoder.values.getOrDefault(val, "");
                 if (!val.isEmpty() && pattern.matcher(val).find()) {
-                    return true;
+                    return pattern.matcher(val).group();
                 }
             }
         }
 
-        return false;
+        return "";
     }
 }

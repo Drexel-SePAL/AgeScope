@@ -57,7 +57,7 @@ public class Main {
     }
 
     public static boolean containAgeCheckText(ArrayList<String> list) {
-        var pattern = Pattern.compile("adult(s)?( only)?|(over )?[1-2]\\d\\+?|under( )?age|age of [1-2]\\d|af_num_adults");
+        var pattern = Pattern.compile("adult(s)?( only)?|(over )?[1-2]\\d\\+?|under( )?age|age of [1-2]\\d|af_num_adults|未成年|[1-2]\\d岁|年龄");
 
         for (var x : list) {
             if (pattern.matcher(x).find()) {

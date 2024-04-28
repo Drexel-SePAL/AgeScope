@@ -9,6 +9,6 @@ public class ResultReport {
     public List<Map<String, Boolean>> activity = new ArrayList<>();
     public List<Map<String, Boolean>> dialog = new ArrayList<>();
     public Set<String> layoutIds = new HashSet<>();
-    public Set<String> layouts = new HashSet<>();
+    public Set<Map.Entry<String, String>> layouts = new HashSet<Map.Entry<String, String>>();
     public double timeInSecond;
 }

@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class ApkFile implements AutoCloseable {
-    public final Map<String, HashSet<String>> checkLayouts = new HashMap<>() {{
+    public final Map<String, HashSet<Map.Entry<String, String>>> checkLayouts = new HashMap<>() {{
         put("age", new HashSet<>());
         put("id", new HashSet<>());
     }};
@@ -72,14 +72,14 @@ public class ApkFile implements AutoCloseable {
                 decoder.parse();
 
                 var ageCheckLayoutXml = decoder.ageCheckLayout();
-                if (!ageCheckLayoutXml.isEmpty()) {
+                if (ageCheckLayoutXml != null) {
                     this.checkLayouts.get("age").add(ageCheckLayoutXml);
                     existCheckLayouts = true;
                     this.layoutIds.add(this.getLayoutIdByName(i));
                 }
 
                 var idCheckLayoutXml = decoder.idCheckLayout();
-                if (!idCheckLayoutXml.isEmpty()) {
+                if (idCheckLayoutXml != null) {
                     this.checkLayouts.get("id").add(idCheckLayoutXml);
                     existCheckLayouts = true;
                     this.layoutIds.add(this.getLayoutIdByName(i));
