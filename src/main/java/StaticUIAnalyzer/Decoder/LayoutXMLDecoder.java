@@ -14,7 +14,7 @@ public class LayoutXMLDecoder extends XMLDecoderBase {
     }
 
     public Map.Entry<String, String> ageCheckLayout() {
-        var pattern = Pattern.compile("adult(s)?( only)?|(over )?[1-2]\\d\\+?|under( )?age|age of [1-2]\\d|af_num_adults|未成年|[1-2]\\d岁|年龄");
+        var pattern = Pattern.compile("adult(s)?( only)?|(over )?\\b(?:1[4-9]|2[0-9])\\b?|under( )?age|age of \\b(?:1[4-9]|2[0-9])\\b|af_num_adults|未成年|\\b(?:1[4-9]|2[0-9])\\b岁|年龄|real identity|ID No|实名");
         var match = foundPatternFromTags(pattern);
         if (!match.isEmpty()) {
             return Map.entry(this.xmlFile.getPath(), match);
@@ -49,8 +49,9 @@ public class LayoutXMLDecoder extends XMLDecoderBase {
 
             if (!val.isEmpty()) {
                 val = stringsXMLDecoder.values.getOrDefault(val, "");
-                if (!val.isEmpty() && pattern.matcher(val).find()) {
-                    return pattern.matcher(val).group();
+                var matcher = pattern.matcher(val);
+                if (!val.isEmpty() && matcher.find()) {
+                    return matcher.group();
                 }
             }
         }

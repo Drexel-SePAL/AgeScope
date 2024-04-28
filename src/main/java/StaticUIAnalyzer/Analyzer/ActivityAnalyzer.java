@@ -35,7 +35,7 @@ public class ActivityAnalyzer extends SootBase {
                 for (var x : res.entrySet()) {
                     if (x.getValue()) {
                         this.result.activityResult = true;
-                        this.result.activity.add(res);
+                        this.result.activity.putAll(res);
                     }
                 }
             }
@@ -69,7 +69,7 @@ public class ActivityAnalyzer extends SootBase {
                 }
 
                 if (!result.getOrDefault("length", false)) {
-                    result.put("length", checkIdLength(currMethod));
+                    result.put("lengthEq18", checkIdLength(currMethod));
                 }
 
                 var subSeq = new HashMap<String, String[]>() {
@@ -89,7 +89,7 @@ public class ActivityAnalyzer extends SootBase {
                 }
             } else if (currMethod.hasActiveBody()) {
                 if (currMethod.getActiveBody().toString().contains("== 18") || currMethod.getActiveBody().toString().contains("!= 18")) {
-                    result.put("length", true);
+                    result.put("lengthEq18", true);
                 }
             }
         }

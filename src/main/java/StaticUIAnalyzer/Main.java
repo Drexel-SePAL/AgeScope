@@ -76,13 +76,13 @@ public class Main {
             var result = new ResultReport();
             result.packageSha256 = filename;
 
-            var apkfile = new ApkFile(apkFilePath, "/Volumes/ramdisk/");
+            var apkfile = new ApkFile(apkFilePath, "/media/ramdisk/");
 
             apkfile.decodeApk();
             apkfile.prepare();
             if (apkfile.examLayouts()) {
                 result.layoutIds.addAll(apkfile.layoutIds);
-                result.layouts.addAll(apkfile.checkLayouts.get("id"));
+                result.layouts = apkfile.checkLayouts;
 //                System.out.println("found check layout file(s): " + apkfile.layoutIds);
 //                System.out.println("found check layout file(s): " + apkfile.checkLayouts.get("id"));
             }
