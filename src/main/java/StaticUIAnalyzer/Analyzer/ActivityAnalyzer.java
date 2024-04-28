@@ -68,7 +68,7 @@ public class ActivityAnalyzer extends SootBase {
                     continue;
                 }
 
-                if (!result.getOrDefault("length", false)) {
+                if (result.getOrDefault("length", false)) {
                     result.put("lengthEq18", checkIdLength(currMethod));
                 }
 

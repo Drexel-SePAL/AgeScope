@@ -39,7 +39,7 @@ public class Main {
     }
 
     public static HashSet<String> containAgeCheckText(ArrayList<String> list) {
-        var pattern = Pattern.compile("adult(s)?( only)?|(over )?[1-2]\\d\\+?|under( )?age|age of [1-2]\\d|af_num_adults|未成年|[1-2]\\d岁|年龄");
+        var pattern = Pattern.compile("adult(s)?( only)?|over \\b(?:1[4-9]|2[0-9])\\b?|under( )?age|age of \\b(?:1[4-9]|2[0-9])\\b|af_num_adults|未成年|\\b(?:1[4-9]|2[0-9])\\b岁|年龄|real identity|ID No|实名");
         var res = new HashSet<String>();
         for (var x : list) {
             var matcher = pattern.matcher(x);
