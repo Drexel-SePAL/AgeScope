@@ -38,7 +38,20 @@ public class Main {
         driver.quit();
     }
 
-    public static ArrayList<String> getText(Document doc) {
+    public static HashSet<String> containAgeCheckText(ArrayList<String> list) {
+        var pattern = Pattern.compile("adult(s)?( only)?|(over )?[1-2]\\d\\+?|under( )?age|age of [1-2]\\d|af_num_adults|未成年|[1-2]\\d岁|年龄");
+        var res = new HashSet<String>();
+        for (var x : list) {
+            var matcher = pattern.matcher(x);
+            if (matcher.find()) {
+                res.add(matcher.group());
+            }
+        }
+
+        return res;
+    }
+
+    public static HashSet<String> hasAgeCheck(Document doc) {
         var elementsWithText = doc.select("[text], [content-desc]");
 
         var textList = new ArrayList<String>();
@@ -53,31 +66,15 @@ public class Main {
             }
         }
 
-        return textList;
-    }
-
-    public static boolean containAgeCheckText(ArrayList<String> list) {
-        var pattern = Pattern.compile("adult(s)?( only)?|(over )?[1-2]\\d\\+?|under( )?age|age of [1-2]\\d|af_num_adults|未成年|[1-2]\\d岁|年龄");
-
-        for (var x : list) {
-            if (pattern.matcher(x).find()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean hasAgeCheck(Document doc) {
-        var textList = getText(doc);
-
         return containAgeCheckText(textList);
     }
 
     public static HashSet<String> check(String apkPath) {
-        var result = new HashSet<String>();
         var mainDoc = Jsoup.parse(driver.getPageSource());
-        if (hasAgeCheck(mainDoc)) {
+        var result = new HashSet<String>();
+        var res = hasAgeCheck(mainDoc);
+        if (!res.isEmpty()) {
+            result = res;
             System.out.println("Contains in mainDoc");
         } else {
             var clickableElements = driver.findElements(By.xpath("//*[@clickable='true']"));
@@ -85,7 +82,9 @@ public class Main {
                 try {
                     element.click();
                     var doc = Jsoup.parse(driver.getPageSource());
-                    if (hasAgeCheck(doc)) {
+                    res = hasAgeCheck(doc);
+                    if (!res.isEmpty()) {
+                        result = res;
                         System.out.println("Contains in otherDoc");
                     }
                 } catch (Exception e) {
