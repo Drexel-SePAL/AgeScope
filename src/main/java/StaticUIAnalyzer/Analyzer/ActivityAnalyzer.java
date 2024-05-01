@@ -137,7 +137,7 @@ public class ActivityAnalyzer extends SootBase {
 
             if (lengthCheckExist) {
                 var boxes = stmt.getUseBoxes();
-                digitCheckExist = (boxes.size() == 3) && (boxes.getLast().toString().contains(" == 18"));
+                digitCheckExist = (boxes.size() == 3) && (boxes.getLast().toString().contains("== 18") || boxes.getLast().toString().contains("!= 18"));
 
                 if (digitCheckExist) {
                     return true;
