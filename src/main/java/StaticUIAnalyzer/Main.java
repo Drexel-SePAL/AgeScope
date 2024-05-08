@@ -67,6 +67,9 @@ public class Main {
 
         // $ erasevolume HFS+ 'ramdisk' `hdiutil attach -nobrowse -nomount ram://16777216`
         // # /Volumes/ramdisk/
+        var os = System.getProperty("os.name").toLowerCase();
+        var ramdiskLocation = os.contains("mac") ? "/Volumes/ramdisk/" : "/media/ramdisk/";
+
         for (var apkFilePath : apkList) {
             var startTime = System.nanoTime();
             var filename = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
@@ -76,7 +79,7 @@ public class Main {
             var result = new ResultReport();
             result.packageSha256 = filename;
 
-            var apkfile = new ApkFile(apkFilePath, "/media/ramdisk/");
+            var apkfile = new ApkFile(apkFilePath, ramdiskLocation);
 
             apkfile.decodeApk();
             apkfile.prepare();

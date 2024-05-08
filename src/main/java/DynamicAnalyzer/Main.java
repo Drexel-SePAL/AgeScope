@@ -1,5 +1,6 @@
 package DynamicAnalyzer;
 
+import CommonUtils.CommonString;
 import CommonUtils.FileUtils;
 import DynamicAnalyzer.Model.ResultReport;
 import DynamicAnalyzer.Util.Utils;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class Main {
     private static AndroidDriver driver;
@@ -39,10 +39,9 @@ public class Main {
     }
 
     public static HashSet<String> containAgeCheckText(ArrayList<String> list) {
-        var pattern = Pattern.compile("adult(s)?( only)?|over \\b(?:1[4-9]|2[0-9])\\b?|under( )?age|age of \\b(?:1[4-9]|2[0-9])\\b|af_num_adults|未成年|\\b(?:1[4-9]|2[0-9])\\b岁|年龄|real identity|ID No|实名(认证)?");
         var res = new HashSet<String>();
         for (var x : list) {
-            var matcher = pattern.matcher(x);
+            var matcher = CommonString.pattern.matcher(x);
             if (matcher.find()) {
                 res.add(matcher.group());
             }

@@ -1,5 +1,6 @@
 package StaticUIAnalyzer.Decoder;
 
+import CommonUtils.CommonString;
 import StaticUIAnalyzer.Base.XMLDecoderBase;
 
 import java.util.Map;
@@ -14,8 +15,7 @@ public class LayoutXMLDecoder extends XMLDecoderBase {
     }
 
     public Map.Entry<String, String> ageCheckLayout() {
-        var pattern = Pattern.compile("adult(s)?( only)?|over \\b(?:1[4-9]|2[0-9])\\b?|under( )?age|age of \\b(?:1[4-9]|2[0-9])\\b|af_num_adults|未成年|\\b(?:1[4-9]|2[0-9])\\b岁|年龄|real identity|ID No|实名认证");
-        var match = foundPatternFromTags(pattern);
+        var match = foundPatternFromTags(CommonString.pattern);
         if (!match.isEmpty()) {
             return Map.entry(this.xmlFile.getPath(), match);
         }

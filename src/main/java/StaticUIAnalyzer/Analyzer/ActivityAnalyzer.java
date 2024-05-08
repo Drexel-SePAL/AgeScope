@@ -110,7 +110,8 @@ public class ActivityAnalyzer extends SootBase {
             }
 
             var invokeExpr = stmt.getInvokeExpr();
-            if (invokeExpr.getMethod().toString().equals("<java.lang.CharSequence: java.lang.CharSequence subSequence(int,int)>")) {
+//            if (invokeExpr.getMethod().toString().equals("<java.lang.CharSequence: java.lang.CharSequence subSequence(int,int)>")) {
+            if (invokeExpr.getArgs().size() == 2) {
                 var exprArgs = invokeExpr.getArgs();
 
                 var result = Utils.sootValueCompare(exprArgs.getFirst(), condition[0]) && Utils.sootValueCompare(exprArgs.getLast(), condition[1]);
