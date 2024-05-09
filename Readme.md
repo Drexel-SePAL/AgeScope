@@ -1,5 +1,18 @@
 # AgeScope
 
+## Background
+
+AgeScope is a prototype of the Static/Dynamic analysis tool for Android applications to identify the existence of age
+identify behaviors. Currently, we have collected ~100k packages which has been labeled as "age restricted/adult only"
+from Google Play and other Android App Markets.
+
+- Static Analysis is based on Soot, which will provide us the intermediate code from JVM bytecodes.
+- Dynamic Analysis is based on Appium, it will be running on Android Emulator and capture/analysis text from UI to
+  conduct age verification.
+
+At this point, we have manually download few Android Application from Chinese Market and established a basic static
+analysis for them. And we are expecting to expand our scope with more Apps.
+
 ## Build Requirements
 
 - Java Development Kit (JDK) 21: https://www.oracle.com/java/technologies/downloads/#java21
