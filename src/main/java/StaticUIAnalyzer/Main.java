@@ -65,7 +65,7 @@ public class Main {
         //     tmpfs /media/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=8192M 0 0
         // # /media/ramdisk/
 
-        // $ erasevolume HFS+ 'ramdisk' `hdiutil attach -nobrowse -nomount ram://16777216`
+        // $ diskutil erasevolume HFS+ 'ramdisk' `hdiutil attach -nobrowse -nomount ram://16777216`
         // # /Volumes/ramdisk/
         var os = System.getProperty("os.name").toLowerCase();
         var ramdiskLocation = os.contains("mac") ? "/Volumes/ramdisk/" : "/media/ramdisk/";

@@ -44,7 +44,7 @@ $ nano /etc/fstab
 $ sudo mount -a
 
 # macOS (temporary, require re-execution after reboot/unmount)
-$ erasevolume HFS+ 'ramdisk' `hdiutil attach -nobrowse -nomount ram://16777216`
+$ diskutil erasevolume HFS+ 'ramdisk' `hdiutil attach -nobrowse -nomount ram://16777216`
 
 # Microsoft Windows: please create your own Ramdisk and remember to change **ramdiskLocation** variable in 
 # StaticUIAnalyzer.Main
