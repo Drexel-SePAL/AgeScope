@@ -2,6 +2,7 @@ package StaticUIAnalyzer;
 
 import CommonUtils.FileUtils;
 import StaticUIAnalyzer.Analyzer.ActivityAnalyzer;
+import StaticUIAnalyzer.Analyzer.AllActivityAnalyzer;
 import StaticUIAnalyzer.Analyzer.DialogAnalyzer;
 import StaticUIAnalyzer.Model.ResultReport;
 import StaticUIAnalyzer.Util.ApkFile;
@@ -94,6 +95,12 @@ public class Main {
             activity.analyze();
             var dialog = new DialogAnalyzer(apkFilePath, sdkPath, result);
             dialog.analyze();
+
+            if (result.activity.isEmpty() || result.dialog.isEmpty()) {
+                var allActivity = new AllActivityAnalyzer(apkFilePath, sdkPath, result);
+                allActivity.analyze();
+            }
+
             result.timeInSecond = (System.nanoTime() - startTime) / 1_000_000_000.0;
 
             try {

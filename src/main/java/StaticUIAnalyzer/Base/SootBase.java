@@ -94,12 +94,13 @@ public class SootBase {
         return false;
     }
 
-    public HashSet<SootClass> findClassesByName(String className) {
+    public HashSet<SootClass> findClassesByName(String className, boolean all) {
         var activitiesClass = new HashSet<SootClass>();
-        var apkClasses = Scene.v().getClasses().stream().filter(s -> !(s.getName().startsWith("java.")) &&
-//                        !(s.getName().startsWith("android.")) &&
-//                        !(s.getName().startsWith("androidx.")) &&
-                !(s.getName().startsWith("com.android.")) && !(s.getName().startsWith("javax.")) && !(s.getName().startsWith("android.support.")) && !(s.getName().startsWith("sun.")) && !(s.getName().startsWith("com.google."))).toList();
+        var apkClasses = all ? Scene.v().getClasses() : Scene.v().getClasses().stream().filter(s -> !(s.getName().startsWith("java.")) &&
+                !(s.getName().startsWith("com.android.")) && !(s.getName().startsWith("javax.")) &&
+                !(s.getName().startsWith("android.support.")) && !(s.getName().startsWith("sun.")) &&
+//              !(s.getName().startsWith("android.")) && !(s.getName().startsWith("androidx.")) &&
+                !(s.getName().startsWith("com.google."))).toList();
 
         for (var cls : apkClasses) {
             if (activitiesClass.contains(cls)) {

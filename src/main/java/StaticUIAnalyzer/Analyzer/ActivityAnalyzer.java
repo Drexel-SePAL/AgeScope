@@ -23,8 +23,8 @@ public class ActivityAnalyzer extends SootBase {
             addExcludeClass();
             Options.v().set_exclude(excludePackagesList);
         }
-        var activities = findClassesByName("android.app.Activity");
-        activities.addAll(findClassesByName("android.app.DialogFragment"));
+        var activities = findClassesByName("android.app.Activity", false);
+        activities.addAll(findClassesByName("android.app.DialogFragment", false));
         for (var a : activities) {
 //            if (!this.possibleVerificationClass(a)) {
 //                continue;

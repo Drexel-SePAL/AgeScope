@@ -23,7 +23,7 @@ public class DialogAnalyzer extends SootBase {
             addExcludeClass();
             Options.v().set_exclude(excludePackagesList);
         }
-        var dialogs = findClassesByName("android.app.Dialog");
+        var dialogs = findClassesByName("android.app.Dialog", false);
 
         for (var a : dialogs) {
             if (!this.possibleVerificationClass(a)) {
