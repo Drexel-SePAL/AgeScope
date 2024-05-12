@@ -7,8 +7,8 @@ import soot.Scene;
 import soot.SootMethod;
 import soot.options.Options;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -29,6 +29,7 @@ public class AllActivityAnalyzer extends SootBase {
         for (var a : activities) {
             for (var method : a.getMethods()) {
                 var res = verificationCheck(method);
+                res.remove("");
                 if (!res.isEmpty()) {
                     this.result.activityResult = true;
                     this.result.activity.putAll(res);
@@ -45,8 +46,7 @@ public class AllActivityAnalyzer extends SootBase {
         }
 
         var activeBody = method.getActiveBody().toString().replace("\n\n", "\n").split("\n");
-        var detectMapStr = new String[]{"(first|last|full)_?name\b", "address(_?[123])?\b", "city\b", "province\b",
-                "zipcode\b", "countrycode\b", "dob\b", "dateofbirth\b", "age\b"};
+        var detectMapStr = new String[]{"(first|last|full)_?name\\b", "address(_?[123])?\\b", "city\\b", "province\\b", "zipcode\\b", "countrycode\\b", "dob\\b", "dateofbirth\\b", "age\\b"};
         var detectMap = new Pattern[detectMapStr.length];
         for (int i = 0; i < detectMapStr.length; i++) {
             detectMap[i] = Pattern.compile(detectMapStr[i]);
@@ -58,14 +58,14 @@ public class AllActivityAnalyzer extends SootBase {
                 continue;
             }
 
-            var resList = new ArrayList<String>();
+            var resList = new HashSet<String>();
             for (var p : detectMap) {
                 var matcher = p.matcher(l);
                 while (matcher.find()) {
                     resList.add(matcher.group());
                 }
 
-                result.put(resList.toString(), true);
+                result.put(resList.toString().equals("[]") ? "" : resList.toString(), true);
             }
 
             var matcher = CommonString.pattern.matcher(l);

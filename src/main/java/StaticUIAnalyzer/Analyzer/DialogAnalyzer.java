@@ -32,6 +32,7 @@ public class DialogAnalyzer extends SootBase {
 
             for (var method : a.getMethods()) {
                 var res = verificationCheck(method);
+                res.remove("");
                 if (!res.isEmpty()) {
                     this.result.dialogResult = true;
                     this.result.dialog.putAll(res);

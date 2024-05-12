@@ -87,6 +87,14 @@ public class Main {
             if (apkfile.examLayouts()) {
                 result.layoutIds.addAll(apkfile.layoutIds);
                 result.layouts = apkfile.checkLayouts;
+
+                var counter = 0;
+                for (var l : result.layouts.entrySet()) {
+                    for (var m : l.getValue().entrySet()) {
+                        counter += m.getValue().length();
+                    }
+                }
+                result.layoutResult = counter > 0;
 //                System.out.println("found check layout file(s): " + apkfile.layoutIds);
 //                System.out.println("found check layout file(s): " + apkfile.checkLayouts.get("id"));
             }

@@ -3,7 +3,7 @@ package StaticUIAnalyzer.Decoder;
 import CommonUtils.CommonString;
 import StaticUIAnalyzer.Base.XMLDecoderBase;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -55,7 +55,7 @@ public class LayoutXMLDecoder extends XMLDecoderBase {
                 }
 
                 var matcher = pattern.matcher(val);
-                var resList = new ArrayList<String>();
+                var resList = new HashSet<String>();
                 while (matcher.find()) {
                     resList.add(matcher.group());
                 }

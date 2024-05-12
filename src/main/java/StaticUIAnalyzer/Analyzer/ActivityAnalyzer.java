@@ -32,6 +32,7 @@ public class ActivityAnalyzer extends SootBase {
 
             for (var method : a.getMethods()) {
                 var res = verificationCheck(method);
+                res.remove("");
                 for (var x : res.entrySet()) {
                     if (x.getValue()) {
                         this.result.activityResult = true;
