@@ -42,9 +42,11 @@ public class Main {
         var res = new HashSet<String>();
         for (var x : list) {
             var matcher = CommonString.pattern.matcher(x);
-            if (matcher.find()) {
-                res.add(matcher.group());
+            var resList = new ArrayList<String>();
+            while (matcher.find()) {
+                resList.add(matcher.group());
             }
+            res.add(resList.toString().equals("[]") ? "" : resList.toString());
         }
 
         return res;

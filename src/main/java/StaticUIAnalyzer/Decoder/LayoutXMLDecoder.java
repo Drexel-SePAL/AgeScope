@@ -3,6 +3,7 @@ package StaticUIAnalyzer.Decoder;
 import CommonUtils.CommonString;
 import StaticUIAnalyzer.Base.XMLDecoderBase;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -49,10 +50,17 @@ public class LayoutXMLDecoder extends XMLDecoderBase {
 
             if (!val.isEmpty()) {
                 val = stringsXMLDecoder.values.getOrDefault(val, "");
-                var matcher = pattern.matcher(val);
-                if (!val.isEmpty() && matcher.find()) {
-                    return matcher.group();
+                if (val.isEmpty()) {
+                    continue;
                 }
+
+                var matcher = pattern.matcher(val);
+                var resList = new ArrayList<String>();
+                while (matcher.find()) {
+                    resList.add(matcher.group());
+                }
+
+                return resList.toString().equals("[]") ? "" : resList.toString();
             }
         }
 

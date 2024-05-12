@@ -1,11 +1,13 @@
 package StaticUIAnalyzer.Analyzer;
 
+import CommonUtils.CommonString;
 import StaticUIAnalyzer.Base.SootBase;
 import StaticUIAnalyzer.Model.ResultReport;
 import soot.Scene;
 import soot.SootMethod;
 import soot.options.Options;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -43,7 +45,8 @@ public class AllActivityAnalyzer extends SootBase {
         }
 
         var activeBody = method.getActiveBody().toString().replace("\n\n", "\n").split("\n");
-        var detectMapStr = new String[]{"(first|last|full)_?name", "address(_?[1|2|3])?", "city", "province", "zipcode", "countrycode", "dob", "dateofbirth"};
+        var detectMapStr = new String[]{"(first|last|full)_?name\b", "address(_?[123])?\b", "city\b", "province\b",
+                "zipcode\b", "countrycode\b", "dob\b", "dateofbirth\b", "age\b"};
         var detectMap = new Pattern[detectMapStr.length];
         for (int i = 0; i < detectMapStr.length; i++) {
             detectMap[i] = Pattern.compile(detectMapStr[i]);
@@ -55,14 +58,21 @@ public class AllActivityAnalyzer extends SootBase {
                 continue;
             }
 
+            var resList = new ArrayList<String>();
             for (var p : detectMap) {
                 var matcher = p.matcher(l);
-                if (!matcher.find()) {
-                    continue;
+                while (matcher.find()) {
+                    resList.add(matcher.group());
                 }
 
-                result.put(matcher.group(0), true);
+                result.put(resList.toString(), true);
             }
+
+            var matcher = CommonString.pattern.matcher(l);
+            while (matcher.find()) {
+                resList.add(matcher.group());
+            }
+            result.put(resList.toString().equals("[]") ? "" : resList.toString(), true);
         }
 
         return result;
