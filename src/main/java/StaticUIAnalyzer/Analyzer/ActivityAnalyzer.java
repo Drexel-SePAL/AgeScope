@@ -88,8 +88,9 @@ public class ActivityAnalyzer extends SootBase {
                     }
                 }
             } else if (currMethod.hasActiveBody()) {
-                if (currMethod.getActiveBody().toString().contains("== 18") || currMethod.getActiveBody().toString().contains("!= 18")) {
-                    result.put("lengthEq18", true);
+                var ab = currMethod.getActiveBody().toString();
+                if (ab.contains("== 18") || ab.contains("!= 18")) {
+                    result.put("abLengthEq18", true);
                 }
             }
         }
