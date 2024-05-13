@@ -60,7 +60,7 @@ public class LayoutXMLDecoder extends XMLDecoderBase {
                     resList.add(matcher.group());
                 }
 
-                return resList.toString().equals("[]") ? "" : resList.toString();
+                return resList.isEmpty() ? "" : String.join(", ", resList);
             }
         }
 

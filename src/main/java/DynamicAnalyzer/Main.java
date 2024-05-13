@@ -46,7 +46,7 @@ public class Main {
             while (matcher.find()) {
                 resList.add(matcher.group());
             }
-            res.add(resList.toString().equals("[]") ? "" : resList.toString());
+            res.add(resList.isEmpty() ? "" : String.join(", ", resList));
         }
 
         return res;

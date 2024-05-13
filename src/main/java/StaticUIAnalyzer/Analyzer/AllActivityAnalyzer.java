@@ -46,7 +46,7 @@ public class AllActivityAnalyzer extends SootBase {
         }
 
         var activeBody = method.getActiveBody().toString().replace("\n\n", "\n").split("\n");
-        var detectMapStr = new String[]{"(first|last|full)_?name\\b", "address(_?[123])?\\b", "city\\b", "province\\b", "zipcode\\b", "countrycode\\b", "dob\\b", "dateofbirth\\b", "age\\b"};
+        var detectMapStr = new String[]{"(first|last|full)?_?name\\b", "address(_?[123])?\\b", "city\\b", "province\\b", "zipcode\\b", "countrycode\\b", "dob\\b", "dateofbirth\\b", "age\\b"};
         var detectMap = new Pattern[detectMapStr.length];
         for (int i = 0; i < detectMapStr.length; i++) {
             detectMap[i] = Pattern.compile(detectMapStr[i]);
@@ -64,15 +64,16 @@ public class AllActivityAnalyzer extends SootBase {
                 while (matcher.find()) {
                     resList.add(matcher.group());
                 }
-
-                result.put(resList.toString().equals("[]") ? "" : resList.toString(), true);
             }
 
             var matcher = CommonString.pattern.matcher(l);
             while (matcher.find()) {
                 resList.add(matcher.group());
             }
-            result.put(resList.toString().equals("[]") ? "" : resList.toString(), true);
+
+            for (var r : resList) {
+                result.put(r, true);
+            }
         }
 
         return result;
