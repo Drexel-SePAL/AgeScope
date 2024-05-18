@@ -37,9 +37,17 @@ public class Main {
         System.out.println("[main] index path: " + indexPath);
         var sdkPath = options.get("sdkPath");
         var outputPath = options.get("outputPath");
+        var existResultPath = options.get("existResultPath");
         var gson = new Gson();
 
         List<String> apkList = new ArrayList<>();
+        if (existResultPath != null) {
+            try (var br = new BufferedReader(new FileReader(existResultPath))) {
+                apkList = br.lines().toList();
+            } catch (Exception ignore) {
+            }
+        }
+
         // check input file
         if (FileUtils.fileExists(indexPath)) {
             try (var br = new BufferedReader(new FileReader(indexPath))) {
@@ -132,6 +140,7 @@ public class Main {
         options.addOption(Option.builder("p").longOpt("platform").argName("sdkPath").hasArg().build());
         options.addOption(Option.builder("i").longOpt("index").argName("indexPath").hasArg().build());
         options.addOption(Option.builder("o").longOpt("outputDir").argName("outputPath").hasArg().build());
+        options.addOption(Option.builder("e").longOpt("existResult").argName("existResultPath").hasArg().build());
 
         DefaultParser parser = new DefaultParser();
 
@@ -206,6 +215,7 @@ public class Main {
         System.out.println("Options:");
         System.out.println("  -h, --help                   show this help message and exit program");
         System.out.println("  -i, --index    <indexPath>   index for input apks");
+        System.out.println("  -e, --exist    <existResultPath>   exist result for input apks");
         System.out.println("  -p, --platform <sdkPath>     Android SDK platform path");
         System.out.println("  -o, --output   <outputPath>  Report output path");
     }
