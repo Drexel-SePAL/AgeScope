@@ -20,10 +20,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     private static AndroidDriver driver;
@@ -117,19 +114,27 @@ public class Main {
         var deviceUdid = options.get("deviceUdid");
         var platformVersion = options.get("platformVersion");
         var outputPath = options.get("outputPath");
+        var existResultPath = options.get("existResult");
+        System.out.println("[main] existResult: " + existResultPath);
         var gson = new Gson();
-        List<String> apkList = new ArrayList<>();
+        List<String> tempList = new ArrayList<>();
 
         // check input file
         if (FileUtils.fileExists(indexPath)) {
             try (var br = new BufferedReader(new FileReader(indexPath))) {
-                apkList = br.lines().toList();
+                tempList = br.lines().toList();
             } catch (Exception ignore) {
             }
         }
+        var apkList = new ArrayList<>(tempList);
+        Collections.shuffle(apkList);
 
         var outputFilePath = outputPath + "/" + FilenameUtils.getBaseName(indexPath).split("\\.")[0] + "_exec_result.txt";
         var processed = Utils.skipStaticProcessedList(outputFilePath);
+        if (existResultPath != null) {
+            processed.addAll(Utils.skipStaticProcessedList(existResultPath));
+        }
+        
         FileWriter fileWriter = null;
         try {
             fileWriter = new FileWriter(outputFilePath, true);
@@ -145,7 +150,7 @@ public class Main {
                 continue;
             }
             execution++;
-            if (execution % 15 == 0) {
+            if (execution % 5 == 0) {
                 var pb = new ProcessBuilder("adb", "-s", deviceUdid, "emu", "avd", "snapshot", "load", "init");
                 var pc = pb.start();
                 pc.waitFor();
@@ -180,6 +185,7 @@ public class Main {
         options.addOption(Option.builder("i").longOpt("index").argName("indexPath").hasArg().build());
         options.addOption(Option.builder("u").longOpt("deviceUdid").argName("deviceUdid").hasArg().build());
         options.addOption(Option.builder("o").longOpt("outputDir").argName("outputPath").hasArg().build());
+        options.addOption(Option.builder("e").longOpt("existResult").argName("existResult").hasArg().build());
 
         DefaultParser parser = new DefaultParser();
 
@@ -247,6 +253,10 @@ public class Main {
             parseOptionResult.put("deviceUdid", cli.getOptionValue("u"));
         }
 
+        if (cli.hasOption("e")) {
+            parseOptionResult.put("existResult", cli.getOptionValue("e"));
+        }
+
         parseOptionResult.put("indexPath", indexPath);
 
         return parseOptionResult;
@@ -260,5 +270,6 @@ public class Main {
         System.out.println("  -v, --platformVersion <platformVersion>     Android SDK platform version");
         System.out.println("  -o, --output          <outputPath>          Report output path");
         System.out.println("  -u, --deviceUdid      <deviceUdid>          Android device UDID");
+        System.out.println("  -e, --exist    <existResultPath>   exist result for input apks");
     }
 }

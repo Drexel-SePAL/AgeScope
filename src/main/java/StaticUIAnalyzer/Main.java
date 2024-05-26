@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,28 +38,28 @@ public class Main {
         System.out.println("[main] index path: " + indexPath);
         var sdkPath = options.get("sdkPath");
         var outputPath = options.get("outputPath");
-        var existResultPath = options.get("existResultPath");
+        var existResultPath = options.get("existResult");
         var gson = new Gson();
 
-        List<String> apkList = new ArrayList<>();
-        if (existResultPath != null) {
-            try (var br = new BufferedReader(new FileReader(existResultPath))) {
-                apkList = br.lines().toList();
-            } catch (Exception ignore) {
-            }
-        }
-
+        List<String> tempList = new ArrayList<>();
         // check input file
         if (FileUtils.fileExists(indexPath)) {
             try (var br = new BufferedReader(new FileReader(indexPath))) {
-                apkList = br.lines().toList();
+                tempList = br.lines().toList();
             } catch (Exception ignore) {
             }
         }
+        var apkList = new ArrayList<>(tempList);
+        Collections.shuffle(apkList);
 
         // check output file
         var outputFilePath = outputPath + "/" + FilenameUtils.getBaseName(indexPath).split("\\.")[0] + "_result.txt";
+
         var processed = Utils.skipStaticProcessedList(outputFilePath);
+        if (existResultPath != null) {
+            processed.addAll(Utils.skipStaticProcessedList(existResultPath));
+        }
+
         FileWriter fileWriter = null;
 
         try {
@@ -141,7 +142,7 @@ public class Main {
         options.addOption(Option.builder("p").longOpt("platform").argName("sdkPath").hasArg().build());
         options.addOption(Option.builder("i").longOpt("index").argName("indexPath").hasArg().build());
         options.addOption(Option.builder("o").longOpt("outputDir").argName("outputPath").hasArg().build());
-        options.addOption(Option.builder("e").longOpt("existResult").argName("existResultPath").hasArg().build());
+        options.addOption(Option.builder("e").longOpt("existResult").argName("existResult").hasArg().build());
 
         DefaultParser parser = new DefaultParser();
 
@@ -204,6 +205,10 @@ public class Main {
 
         if (cli.hasOption("o")) {
             parseOptionResult.put("outputPath", cli.getOptionValue("o"));
+        }
+
+        if (cli.hasOption("e")) {
+            parseOptionResult.put("existResult", cli.getOptionValue("e"));
         }
 
         parseOptionResult.put("indexPath", indexPath);
