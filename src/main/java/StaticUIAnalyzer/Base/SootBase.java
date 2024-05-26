@@ -33,7 +33,6 @@ public class SootBase {
         this.platformPath = platformPath;
     }
 
-
     public void addExcludeClass() {
         excludePackagesList.add("java.");
         excludePackagesList.add("android.");

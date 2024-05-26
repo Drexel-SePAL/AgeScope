@@ -82,9 +82,10 @@ public class Main {
         for (var apkFilePath : apkList) {
             var startTime = System.nanoTime();
             var filename = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
-            if (processed.contains(filename)) {
+            if (processed.contains(filename) || !FileUtils.fileExists(filename)) {
                 continue;
             }
+            System.out.println("[processing] " + filename);
             var result = new ResultReport();
             result.packageSha256 = filename;
 

@@ -28,13 +28,12 @@ import java.util.List;
 public class Main {
     private static AndroidDriver driver;
 
-    public static void setupDriver(String deviceName, String platformVersion, String apkPath) throws URISyntaxException, MalformedURLException {
-        var options = new UiAutomator2Options().setPlatformName("Android").setPlatformVersion(platformVersion).setAutomationName("uiautomator2").setDeviceName(deviceName).setAutoGrantPermissions(true).setApp(apkPath);
+    public static void setupDriver(String deviceUdid, String platformVersion, String apkPath) throws URISyntaxException, MalformedURLException {
+        var options = new UiAutomator2Options().setPlatformName("Android").setPlatformVersion(platformVersion).setAutomationName("uiautomator2").setUdid(deviceUdid).setAutoGrantPermissions(true).setApp(apkPath).setFullReset(true);
         driver = new AndroidDriver(new URI("http://127.0.0.1:4723").toURL(), options);
     }
 
     public static void tearDownDriver() throws InterruptedException {
-        Thread.sleep(5000);
         driver.quit();
     }
 
@@ -46,7 +45,10 @@ public class Main {
             while (matcher.find()) {
                 resList.add(matcher.group());
             }
-            res.add(resList.isEmpty() ? "" : String.join(", ", resList));
+
+            if (!resList.isEmpty()) {
+                res.add(String.join(", ", resList));
+            }
         }
 
         return res;
@@ -88,10 +90,10 @@ public class Main {
                         result = res;
                         System.out.println("Contains in otherDoc");
                     }
+
+                    driver.navigate().back();
                 } catch (Exception e) {
                     System.out.println("Could not click on some elements due to overlay or state change.");
-                } finally {
-                    driver.navigate().back();
                 }
             }
         }
@@ -99,7 +101,7 @@ public class Main {
         return result;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, InterruptedException {
         CommandLine cli = null;
         // try to parse cli args
         try {
@@ -112,11 +114,12 @@ public class Main {
         var options = parseOptions(cli);
         var indexPath = options.get("indexPath");
         System.out.println("[main] index path: " + indexPath);
-        var deviceName = options.get("deviceName");
+        var deviceUdid = options.get("deviceUdid");
         var platformVersion = options.get("platformVersion");
         var outputPath = options.get("outputPath");
         var gson = new Gson();
         List<String> apkList = new ArrayList<>();
+
         // check input file
         if (FileUtils.fileExists(indexPath)) {
             try (var br = new BufferedReader(new FileReader(indexPath))) {
@@ -135,31 +138,39 @@ public class Main {
             System.exit(1);
         }
 
+        var execution = 0;
         for (var apkFilePath : apkList) {
-            try {
-                var filename = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
-                if (processed.contains(filename)) {
-                    continue;
-                }
-                var result = new ResultReport();
-                result.packageSha256 = filename;
-                setupDriver(deviceName, platformVersion, apkFilePath);
+            var filename = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
+            if (processed.contains(filename)) {
+                continue;
+            }
+            execution++;
+            if (execution % 15 == 0) {
+                var pb = new ProcessBuilder("adb", "-s", deviceUdid, "emu", "avd", "snapshot", "load", "init");
+                var pc = pb.start();
+                pc.waitFor();
+            }
+            var result = new ResultReport();
 
+            result.packageSha256 = filename;
+            try {
+                setupDriver(deviceUdid, platformVersion, apkFilePath);
                 Thread.sleep(3000);
                 result.matchedLines = check(apkFilePath);
                 result.stringMatched = !result.matchedLines.isEmpty();
                 tearDownDriver();
-
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
                 fileWriter.write(gson.toJson(result) + "\n");
                 fileWriter.flush();
-            } catch (Exception ignore) {
+                continue;
             }
+
+            fileWriter.write(gson.toJson(result) + "\n");
+            fileWriter.flush();
         }
 
-        try {
-            fileWriter.close();
-        } catch (Exception ignore) {
-        }
+        fileWriter.close();
     }
 
     private static CommandLine cliParser(String[] args) throws ParseException {
@@ -167,7 +178,7 @@ public class Main {
         options.addOption(Option.builder("h").longOpt("help").build());
         options.addOption(Option.builder("v").longOpt("platformVersion").argName("platformVersion").hasArg().build());
         options.addOption(Option.builder("i").longOpt("index").argName("indexPath").hasArg().build());
-        options.addOption(Option.builder("n").longOpt("deviceName").argName("deviceName").hasArg().build());
+        options.addOption(Option.builder("u").longOpt("deviceUdid").argName("deviceUdid").hasArg().build());
         options.addOption(Option.builder("o").longOpt("outputDir").argName("outputPath").hasArg().build());
 
         DefaultParser parser = new DefaultParser();
@@ -208,8 +219,8 @@ public class Main {
             System.exit(1);
         }
 
-        if (!cli.hasOption("n")) {
-            System.err.println("[cli parser] err: missing required option: -o, --deviceName");
+        if (!cli.hasOption("u")) {
+            System.err.println("[cli parser] err: missing required option: -o, --deviceUdid");
             helpMessage();
             System.exit(1);
         }
@@ -232,8 +243,8 @@ public class Main {
             parseOptionResult.put("outputPath", cli.getOptionValue("o"));
         }
 
-        if (cli.hasOption("n")) {
-            parseOptionResult.put("deviceName", cli.getOptionValue("n"));
+        if (cli.hasOption("u")) {
+            parseOptionResult.put("deviceUdid", cli.getOptionValue("u"));
         }
 
         parseOptionResult.put("indexPath", indexPath);
@@ -248,6 +259,6 @@ public class Main {
         System.out.println("  -i, --index           <indexPath>           index for input apks");
         System.out.println("  -v, --platformVersion <platformVersion>     Android SDK platform version");
         System.out.println("  -o, --output          <outputPath>          Report output path");
-        System.out.println("  -n, --deviceName      <deviceName>          Android device name");
+        System.out.println("  -u, --deviceUdid      <deviceUdid>          Android device UDID");
     }
 }
