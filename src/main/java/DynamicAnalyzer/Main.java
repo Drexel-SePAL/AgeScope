@@ -134,7 +134,7 @@ public class Main {
         if (existResultPath != null) {
             processed.addAll(Utils.skipStaticProcessedList(existResultPath));
         }
-        
+
         FileWriter fileWriter = null;
         try {
             fileWriter = new FileWriter(outputFilePath, true);
@@ -154,6 +154,7 @@ public class Main {
                 var pb = new ProcessBuilder("adb", "-s", deviceUdid, "emu", "avd", "snapshot", "load", "init");
                 var pc = pb.start();
                 pc.waitFor();
+                Thread.sleep(3000);
             }
             var result = new ResultReport();
 

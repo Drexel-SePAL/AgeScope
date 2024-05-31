@@ -50,6 +50,7 @@ public class Main {
             }
         }
         var apkList = new ArrayList<>(tempList);
+        System.out.println("[main] apk list: " + apkList.size());
         Collections.shuffle(apkList);
 
         // check output file
@@ -83,7 +84,7 @@ public class Main {
         for (var apkFilePath : apkList) {
             var startTime = System.nanoTime();
             var filename = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");
-            if (processed.contains(filename) || !FileUtils.fileExists(filename)) {
+            if (processed.contains(filename) || !FileUtils.fileExists(apkFilePath)) {
                 continue;
             }
             System.out.println("[processing] " + filename);
