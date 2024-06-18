@@ -115,10 +115,13 @@ public class Main {
             var dialog = new DialogAnalyzer(apkFilePath, sdkPath, result);
             dialog.analyze();
 
-            if (result.activity.isEmpty() || result.dialog.isEmpty()) {
-                var allActivity = new AllActivityAnalyzer(apkFilePath, sdkPath, result);
-                allActivity.analyze();
-            }
+            var allActivity = new AllActivityAnalyzer(apkFilePath, sdkPath, result);
+            allActivity.analyze();
+
+//            if (result.activity.isEmpty() && result.dialog.isEmpty()) {
+//                var allActivity = new AllActivityAnalyzer(apkFilePath, sdkPath, result);
+//                allActivity.analyze();
+//            }
 
             result.timeInSecond = (System.nanoTime() - startTime) / 1_000_000_000.0;
 

@@ -52,19 +52,24 @@ public class Main {
     }
 
     public static HashSet<String> hasAgeCheck(Document doc) {
-        var elementsWithText = doc.select("[text], [content-desc]");
+//        var elementsWithText = doc.select("[text], [content-desc]");
 
         var textList = new ArrayList<String>();
-        for (var element : elementsWithText) {
-            var text = element.attr("text").trim();
-            var contentDesc = element.attr("content-desc").trim();
-            if (!text.isEmpty()) {
-                textList.add(text);
-            }
-            if (!contentDesc.isEmpty()) {
-                textList.add(contentDesc);
-            }
+
+        for (var element : doc.toString().split("\n")) {
+            textList.add(element.strip());
         }
+
+//        for (var element : elementsWithText) {
+//            var text = element.attr("text").trim();
+//            var contentDesc = element.attr("content-desc").trim();
+//            if (!text.isEmpty()) {
+//                textList.add(text);
+//            }
+//            if (!contentDesc.isEmpty()) {
+//                textList.add(contentDesc);
+//            }
+//        }
 
         return containAgeCheckText(textList);
     }
