@@ -12,6 +12,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -79,25 +80,45 @@ public class Main {
             result = res;
             System.out.println("Contains in mainDoc");
         } else {
-            var clickableElements = driver.findElements(By.xpath("//*[@clickable='true']"));
-            for (var element : clickableElements) {
-                try {
-                    element.click();
-                    var doc = Jsoup.parse(driver.getPageSource());
-                    res = hasAgeCheck(doc);
-                    if (!res.isEmpty()) {
-                        result = res;
-                        System.out.println("Contains in otherDoc");
-                    }
-
-                    driver.navigate().back();
-                } catch (Exception e) {
-                    System.out.println("Could not click on some elements due to overlay or state change.");
-                }
-            }
+            result = checkClickable(driver);
         }
 
         return result;
+    }
+
+    public static HashSet<String> checkClickable(WebDriver driver) {
+        var clickableElements = driver.findElements(By.xpath("//*[@clickable='true']"));
+
+        if (clickableElements.isEmpty()) {
+            var doc = Jsoup.parse(driver.getPageSource());
+
+            return hasAgeCheck(doc);
+        }
+
+        for (var element : clickableElements) {
+            try {
+                element.click();
+                var doc = Jsoup.parse(driver.getPageSource());
+
+                var res = hasAgeCheck(doc);
+                if (!res.isEmpty()) {
+                    System.out.println("Contains in otherDoc");
+
+                    return res;
+                }
+
+                res = checkClickable(driver);
+                if (!res.isEmpty()) {
+                    return res;
+                }
+
+                driver.navigate().back();
+            } catch (Exception e) {
+                System.out.println("Could not click on some elements due to overlay or state change.");
+            }
+        }
+
+        return new HashSet<>();
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
