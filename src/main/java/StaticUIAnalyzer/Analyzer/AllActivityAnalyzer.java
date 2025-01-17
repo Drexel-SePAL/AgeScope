@@ -46,7 +46,7 @@ public class AllActivityAnalyzer extends SootBase {
         }
 
         var activeBody = method.getActiveBody().toString().replace("\n\n", "\n").split("\n");
-        var detectMapStr = new String[]{"legal_?name\\b", "first_?name\\b", "last_?name\\b", "full_?name\\b", "address(_?1)?\\b", "address(_?2)?\\b", "address(_?3)?\\b", "city\\b", "province\\b", "zip_?code\\b", "country_?code\\b", "dob\\b", "date_?of_?birth\\b", "age\\b"};
+        var detectMapStr = new String[]{"legal_?name\\b", "first_?name\\b", "last_?name\\b", "full_?name\\b", "address(_?1)?\\b", "address(_?2)?\\b", "address(_?3)?\\b", "city\\b", "province\\b", "zip_?code\\b", "country_?code\\b", "dob\\b", "date_?of_?birth\\b", "age\\b", "shengri\\b"};
         var detectMap = new Pattern[detectMapStr.length];
         for (int i = 0; i < detectMapStr.length; i++) {
             detectMap[i] = Pattern.compile(detectMapStr[i]);
@@ -61,7 +61,7 @@ public class AllActivityAnalyzer extends SootBase {
             var resList = new HashSet<String>();
             for (var p : detectMap) {
                 var matcher = p.matcher(l);
-                while (matcher.find()) {
+                while (matcher.find() && !(l.contains("package") || l.contains("storage"))) {
                     resList.add(matcher.group());
                 }
             }
@@ -72,7 +72,7 @@ public class AllActivityAnalyzer extends SootBase {
             }
 
             for (var r : resList) {
-                result.put(r, true);
+                result.put(String.format("_%s", r), true);
             }
         }
 
