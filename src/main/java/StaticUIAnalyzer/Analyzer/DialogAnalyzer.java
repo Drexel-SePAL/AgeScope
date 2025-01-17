@@ -52,7 +52,7 @@ public class DialogAnalyzer extends SootBase {
                 .collect(Collectors.groupingBy(Type::toString, Collectors.counting()));
 
         if (types.size() == 1 && !this.result.layouts.isEmpty() && types.getOrDefault("java.lang.String", 0L) == 2L) {
-            result.put("age", true);
+            result.put("dialog_age_input", true);
         }
 
         return result;

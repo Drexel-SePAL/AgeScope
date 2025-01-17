@@ -52,16 +52,27 @@ public class AllActivityAnalyzer extends SootBase {
             detectMap[i] = Pattern.compile(detectMapStr[i]);
         }
 
+        String[] skipWords = {"message", "package", "storage", "image"};
         for (var line : activeBody) {
+            var skip = false;
             var l = line.toLowerCase();
-            if (!l.contains("getstring")) {
+
+            for (String skipWord : skipWords) {
+                if (l.contains(skipWord)) {
+                    skip = true;
+                    break;
+                }
+            }
+
+            if (skip || !l.contains("getstring"))
+            {
                 continue;
             }
 
             var resList = new HashSet<String>();
             for (var p : detectMap) {
                 var matcher = p.matcher(l);
-                while (matcher.find() && !(l.contains("package") || l.contains("storage"))) {
+                while (matcher.find()) {
                     resList.add(matcher.group());
                 }
             }
