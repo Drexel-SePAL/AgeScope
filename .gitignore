@@ -40,3 +40,7 @@ build/
 ### Gradle ###
 .gradle
 build
+
+### Result ###
+sample/result/**
+sample/apk_index.txt
