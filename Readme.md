@@ -30,9 +30,21 @@ analysis for them. And we are expecting to expand our scope with more Apps.
   ```
 - Android SDK: `$ sdkmanager "build-tools;33.0.2" "platform-tools" "platforms;android-33"`
 
-## Execute
+## Quick Start in macOS
 
-Create Ramdisk:
+```bash
+# resource path
+#   apk: ./sample/apk
+#   index: ./sample/apk_index.txt
+#   result: ./sample/result/apk_index_result.txt
+
+$ chmod +x ./macos_run.sh
+$ ./macos_run.sh
+```
+
+## More Details
+
+### Create Ramdisk
 
 ```bash
 # Linux (permanently, will exist when reboot)
@@ -50,12 +62,19 @@ $ diskutil erasevolume HFS+ 'ramdisk' `hdiutil attach -nobrowse -nomount ram://1
 # StaticUIAnalyzer.Main
 ```
 
-StaticUIAnalyzer (Replace `<>` with your own values):
+### Build
 
 ```bash
-$ cd <project_dir>
 $ gradle build
-$ java -cp ./build/libs/AgeScope-1.0-SNAPSHOT.jar StaticUIAnalyzer.Main -i <index_file> -o <result_dir> -p ${ANDROID_HOME}/platforms/
+```
+
+### Execute
+
+```bash
+$ java -cp ./build/libs/AgeScope-1.0-SNAPSHOT.jar StaticUIAnalyzer.Main \
+-i <index_file> \
+-o <result_dir> \
+-p ${ANDROID_HOME}/platforms/
 ```
 
 ### Sample Index File
@@ -63,5 +82,5 @@ $ java -cp ./build/libs/AgeScope-1.0-SNAPSHOT.jar StaticUIAnalyzer.Main -i <inde
 Contains path of each apk file, separated by linebreak:
 
 ```
-./3C70295C1177034E9D7C76285304941068471E9E31528D34FEF43962BF2D6993.apk
+/Users/username/AgeScope/sample/apk/D063343811C7E160A4421FDFD0715D14A2EC9EE400777DD68F2E41CAAFF524EF.apk
 ```
