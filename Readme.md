@@ -13,7 +13,7 @@ from Google Play and other Android App Markets.
 At this point, we have manually download few Android Application from Chinese Market and established a basic static
 analysis for them. And we are expecting to expand our scope with more Apps.
 
-## Build Requirements
+## Requirements
 
 - Java Development Kit (JDK) 21: https://www.oracle.com/java/technologies/downloads/#java21
 - Gradle: https://gradle.org/install/
@@ -28,16 +28,19 @@ analysis for them. And we are expecting to expand our scope with more Apps.
   
   # Microsoft Windows: Please add environment variable by yourself
   ```
-- Android SDK: `$ sdkmanager "build-tools;33.0.2" "platform-tools" "platforms;android-33"`
+- Install Android SDK: `$ sdkmanager "build-tools;33.0.2" "platform-tools" "platforms;android-33"`
 
 ## Quick Start in macOS
 
-```bash
-# resource path
-#   apk: ./sample/apk
-#   index: ./sample/apk_index.txt
-#   result: ./sample/result/apk_index_result.txt
+### Corresponding Path
 
+- apk: ./sample/apk
+- index: ./sample/apk_index.txt
+- result: ./sample/result/apk_index_result.txt
+
+### Run Everything
+
+```bash
 $ chmod +x ./macos_run.sh
 $ ./macos_run.sh
 ```
@@ -79,7 +82,7 @@ $ java -cp ./build/libs/AgeScope-1.0-SNAPSHOT.jar StaticUIAnalyzer.Main \
 
 ### Sample Index File
 
-Contains path of each apk file, separated by linebreak:
+Contains path of each apk file, separated by linebreak (this is an example, it is not necessary to put everything into `sample` directory):
 
 ```
 /Users/username/AgeScope/sample/apk/D063343811C7E160A4421FDFD0715D14A2EC9EE400777DD68F2E41CAAFF524EF.apk
