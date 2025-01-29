@@ -23,6 +23,8 @@ public class XMLDecoderBase {
 
     public void parse() throws ParserConfigurationException, IOException, SAXException {
         var dbFactory = DocumentBuilderFactory.newInstance();
+        dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         var dBuilder = dbFactory.newDocumentBuilder();
         var doc = dBuilder.parse(this.xmlFile);
         doc.getDocumentElement().normalize();
