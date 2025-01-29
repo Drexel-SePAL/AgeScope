@@ -70,17 +70,20 @@ public class Main {
             System.exit(1);
         }
 
-        // # mkdir -p /media/ramdisk
-        // # chown -R user:user /media/ramdisk
+        // Linux
+        // # mkdir -p /mnt/ramdisk
+        // # chown -R user:user /mnt/ramdisk
         // # nano /etc/fstab
-        //     tmpfs /media/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=8192M 0 0
-        // # /media/ramdisk/
+        //     tmpfs /mnt/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=8192M 0 0
+        // # /mnt/ramdisk/
 
+        // macOS
         // $ diskutil erasevolume HFS+ 'ramdisk' `hdiutil attach -nobrowse -nomount ram://16777216`
-        // # /Volumes/ramdisk/
+        // $ /Volumes/ramdisk/
         var os = System.getProperty("os.name").toLowerCase();
-        var ramdiskLocation = os.contains("mac") ? "/Volumes/ramdisk/" : "/media/ramdisk/";
+        var ramdiskLocation = os.contains("mac") ? "/Volumes/ramdisk/" : "/mnt/ramdisk/";
 
+        System.out.println("[main] ramdisk: " + ramdiskLocation);
         for (var apkFilePath : apkList) {
             var startTime = System.nanoTime();
             var filename = FilenameUtils.getBaseName(apkFilePath).replace(".apk", "");

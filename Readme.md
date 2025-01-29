@@ -30,6 +30,13 @@ analysis for them. And we are expecting to expand our scope with more Apps.
   ```
 - Install Android SDK: `$ sdkmanager "build-tools;33.0.2" "platform-tools" "platforms;android-33"`
 
+## Docker
+
+```
+$ docker build -t agescope .
+$ docker run -it --tmpfs /mnt/ramdisk:rw,size=4g -v $PWD/sample/:/sample agescope
+```
+
 ## Quick Start in macOS
 
 ### Corresponding Path
@@ -51,11 +58,11 @@ $ ./macos_run.sh
 
 ```bash
 # Linux (permanently, will exist when reboot)
-$ sudo mkdir -p /media/ramdisk
-$ sudo chown -R user:user /media/ramdisk
+$ sudo mkdir -p /mnt/ramdisk
+$ sudo chown -R user:user /mnt/ramdisk
 $ nano /etc/fstab
     # add line above to the EOF
-    # tmpfs /media/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=8192M 0 0
+    # tmpfs /mnt/ramdisk tmpfs nodev,nosuid,noexec,nodiratime,size=8192M 0 0
 $ sudo mount -a
 
 # macOS (temporary, require re-execution after reboot/unmount)
