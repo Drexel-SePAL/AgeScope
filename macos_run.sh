@@ -9,7 +9,7 @@ INDEX_FILE=${SAMPLE_DIR}/apk_index.txt
 
 # create ramdisk if not exist
 if [ ! -d "${RAMDISK}" ]; then
-    diskutil erasevolume HFS+ 'ramdisk' `hdiutil attach -nobrowse -nomount ram://16777216`
+    diskutil erasevolume HFS+ 'ramdisk' $(hdiutil attach -nobrowse -nomount ram://16777216)
 fi
 
 # build

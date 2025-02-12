@@ -43,4 +43,8 @@ build
 
 ### Result ###
 sample/result/**
+sample/apk/**
 sample/apk_index.txt
+
+### Temp ###
+temp/**
