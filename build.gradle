@@ -35,6 +35,7 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes 'Main-Class': 'org.fanfanishere.StaticUIAnalyzer.Main'
+        attributes 'Main-Class': 'org.fanfanishere.DynamicAnalyzer.Main'
     }
     from sourceSets.main.output
     dependsOn configurations.runtimeClasspath
