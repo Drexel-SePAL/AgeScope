@@ -66,7 +66,7 @@ $ nano /etc/fstab
 $ sudo mount -a
 
 # macOS (temporary, require re-execution after reboot/unmount)
-$ diskutil erasevolume HFS+ 'ramdisk' `hdiutil attach -nobrowse -nomount ram://16777216`
+$ diskutil erasevolume HFS+ 'ramdisk' $(hdiutil attach -nobrowse -nomount ram://16777216)
 
 # Microsoft Windows: please create your own Ramdisk and remember to change **ramdiskLocation** variable in 
 # StaticUIAnalyzer.Main
@@ -92,5 +92,5 @@ $ java -cp ./build/libs/AgeScope-1.0-SNAPSHOT.jar StaticUIAnalyzer.Main \
 Contains path of each apk file, separated by linebreak (this is an example, it is not necessary to put everything into `sample` directory):
 
 ```
-/Users/username/AgeScope/sample/apk/D063343811C7E160A4421FDFD0715D14A2EC9EE400777DD68F2E41CAAFF524EF.apk
+$HOME/AgeScope/sample/apk/D063343811C7E160A4421FDFD0715D14A2EC9EE400777DD68F2E41CAAFF524EF.apk
 ```
