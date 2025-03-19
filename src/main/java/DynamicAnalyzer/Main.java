@@ -18,13 +18,18 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.*;
 
 public class Main {
     private static AndroidDriver driver;
 
     public static void setupDriver(String deviceUdid, String platformVersion, String apkPath) throws URISyntaxException, MalformedURLException {
-        var options = new UiAutomator2Options().setPlatformName("Android").setPlatformVersion(platformVersion).setAutomationName("uiautomator2").setUdid(deviceUdid).setAutoGrantPermissions(true).setApp(apkPath).setFullReset(true);
+        var options = new UiAutomator2Options().setPlatformName("Android").setPlatformVersion(platformVersion).setAutomationName("uiautomator2").setUdid(deviceUdid)
+                .setAutoGrantPermissions(true)
+                .setApp(apkPath)
+                .setNoReset(true)
+                .setNewCommandTimeout(Duration.ofSeconds(600));
         driver = new AndroidDriver(new URI("http://127.0.0.1:4723").toURL(), options);
     }
 
@@ -72,14 +77,20 @@ public class Main {
         return containAgeCheckText(textList);
     }
 
-    public static HashSet<String> check(String apkPath) {
+    public static HashSet<String> check(boolean recursive) {
         var mainDoc = Jsoup.parse(driver.getPageSource());
         var result = new HashSet<String>();
         var res = hasAgeCheck(mainDoc);
         if (!res.isEmpty()) {
-            result = res;
             System.out.println("Contains in mainDoc");
-        } else {
+
+            return res;
+        }
+
+        if (recursive) {
+            result = recursiveCheckClickable(driver);
+        } else
+        {
             result = checkClickable(driver);
         }
 
@@ -87,6 +98,29 @@ public class Main {
     }
 
     public static HashSet<String> checkClickable(WebDriver driver) {
+        var clickableElements = driver.findElements(By.xpath("//*[@clickable='true']"));
+
+        for (var element : clickableElements) {
+            try {
+                element.click();
+                var doc = Jsoup.parse(driver.getPageSource());
+                var result = hasAgeCheck(doc);
+                if (!result.isEmpty()) {
+                    System.out.println("Contains in otherDoc");
+
+                    return result;
+                }
+
+                driver.navigate().back();
+            } catch (Exception e) {
+                System.out.println("Could not click on some elements due to overlay or state change.");
+            }
+        }
+
+        return new HashSet<>();
+    }
+
+    public static HashSet<String> recursiveCheckClickable(WebDriver driver) {
         var clickableElements = driver.findElements(By.xpath("//*[@clickable='true']"));
 
         if (clickableElements.isEmpty()) {
@@ -107,7 +141,7 @@ public class Main {
                     return res;
                 }
 
-                res = checkClickable(driver);
+                res = recursiveCheckClickable(driver);
                 if (!res.isEmpty()) {
                     return res;
                 }
@@ -135,6 +169,14 @@ public class Main {
         var indexPath = options.get("indexPath");
         System.out.println("[main] index path: " + indexPath);
         var deviceUdid = options.get("deviceUdid");
+
+        var recursive = options.get("recursive");
+        var isRecursive = false;
+        if (recursive != null)
+        {
+            isRecursive = recursive.equals("recursive");
+        }
+        
         var platformVersion = options.get("platformVersion");
         var outputPath = options.get("outputPath");
         var existResultPath = options.get("existResult");
@@ -185,7 +227,7 @@ public class Main {
             try {
                 setupDriver(deviceUdid, platformVersion, apkFilePath);
                 Thread.sleep(3000);
-                result.matchedLines = check(apkFilePath);
+                result.matchedLines = check(isRecursive);
                 result.stringMatched = !result.matchedLines.isEmpty();
                 tearDownDriver();
             } catch (Exception e) {
@@ -208,6 +250,7 @@ public class Main {
         options.addOption(Option.builder("v").longOpt("platformVersion").argName("platformVersion").hasArg().build());
         options.addOption(Option.builder("i").longOpt("index").argName("indexPath").hasArg().build());
         options.addOption(Option.builder("u").longOpt("deviceUdid").argName("deviceUdid").hasArg().build());
+        options.addOption(Option.builder("r").longOpt("recursive").argName("recursive").hasArg(false).build());
         options.addOption(Option.builder("o").longOpt("outputDir").argName("outputPath").hasArg().build());
         options.addOption(Option.builder("e").longOpt("existResult").argName("existResult").hasArg().build());
 
@@ -277,6 +320,10 @@ public class Main {
             parseOptionResult.put("deviceUdid", cli.getOptionValue("u"));
         }
 
+        if (cli.hasOption("r")) {
+            parseOptionResult.put("recursive", "recursive");
+        }
+
         if (cli.hasOption("e")) {
             parseOptionResult.put("existResult", cli.getOptionValue("e"));
         }
@@ -289,11 +336,12 @@ public class Main {
     private static void helpMessage() {
         System.out.println("usage: DynamicUIAnalyzer [OPTIONS]\n");
         System.out.println("Options:");
-        System.out.println("  -h, --help                                  show this help message and exit program");
-        System.out.println("  -i, --index           <indexPath>           index for input apks");
+        System.out.println("  -h, --help                                  Show this help message and exit program");
+        System.out.println("  -i, --index           <indexPath>           Index for input apks");
         System.out.println("  -v, --platformVersion <platformVersion>     Android SDK platform version");
         System.out.println("  -o, --output          <outputPath>          Report output path");
         System.out.println("  -u, --deviceUdid      <deviceUdid>          Android device UDID");
-        System.out.println("  -e, --exist    <existResultPath>   exist result for input apks");
+        System.out.println("  -r, --recursive                             Check UI recursively");
+        System.out.println("  -e, --exist    <existResultPath>            Exist result for input apks");
     }
 }
